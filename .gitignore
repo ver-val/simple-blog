@@ -1,0 +1,28 @@
+# general
+.DS_Store
+*.log
+
+# env
+.env
+.env.*
+!.env.example
+
+# node / frontend
+node_modules/
+dist/
+coverage/
+.vite/
+
+# go / backend
+bin/
+*.test
+*.out
+server/.cache/
+server/coverage.out
+
+# misc caches
+.cache/
+
+# IDE
+.vscode/
+.idea/
