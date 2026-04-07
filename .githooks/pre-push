@@ -4,25 +4,4 @@ set -euo pipefail
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "$ROOT_DIR"
 
-echo "[pre-push] Running server lint..."
-./scripts/lint-server.sh
-
-echo "[pre-push] Running server unit tests..."
-(
-  cd server
-  GOCACHE="$(pwd)/.cache/go-build" GOMODCACHE="$(pwd)/.cache/go-mod" go test ./...
-)
-
-echo "[pre-push] Running client lint..."
-(
-  cd client
-  npm run lint
-)
-
-echo "[pre-push] Running client unit tests..."
-(
-  cd client
-  npm test
-)
-
-echo "[pre-push] All checks passed."
+./scripts/test-all.sh
