@@ -1,5 +1,9 @@
 # Simple Blog (Go + React + PostgreSQL)
 
+## Repository Info
+- Student: Valeriia Vereshchynska
+- Branching strategy: Trunk-based development
+
 ## Stack
 - Backend: Go (`net/http`, `chi`, `pgx`, JWT)
 - Frontend: React + Vite
