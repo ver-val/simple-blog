@@ -1,0 +1,73 @@
+{
+  "id": "e8b9c2f1-4f27-4dc6-8fdf-2d9d1a3f0b41",
+  "version": "2.0",
+  "name": "Simple Blog Record And Play",
+  "url": "http://localhost:5173",
+  "tests": [
+    {
+      "id": "c4f7292c-a1db-4fb4-b8d6-e8ed34a3af13",
+      "name": "Register Invalid Email Validation",
+      "commands": [
+        { "id": "1", "command": "open", "target": "/register", "value": "" },
+        { "id": "2", "command": "pause", "target": "700", "value": "" },
+        { "id": "3", "command": "type", "target": "css=input[placeholder='username']", "value": "record.user" },
+        { "id": "4", "command": "type", "target": "css=input[placeholder='email']", "value": "invalid-email" },
+        { "id": "5", "command": "type", "target": "css=input[placeholder='password']", "value": "Password123!" },
+        { "id": "6", "command": "type", "target": "css=input[placeholder='confirm password']", "value": "Password123!" },
+        { "id": "7", "command": "click", "target": "xpath=//button[normalize-space()='Register Now']", "value": "" },
+        { "id": "8", "command": "waitForText", "target": "xpath=//p[contains(@class,'error')]", "value": "The email address is not valid" }
+      ]
+    },
+    {
+      "id": "3909cff8-3d88-4be8-87de-af391db52437",
+      "name": "Login Form Disabled By Default",
+      "commands": [
+        { "id": "9", "command": "open", "target": "/login", "value": "" },
+        { "id": "10", "command": "pause", "target": "700", "value": "" },
+        { "id": "11", "command": "assertElementPresent", "target": "css=button[disabled]", "value": "" },
+        { "id": "12", "command": "assertText", "target": "xpath=//h1[normalize-space()='Login']", "value": "Login" }
+      ]
+    },
+    {
+      "id": "2cb8f9c8-f0da-4544-8f8b-4be0a2f0ad47",
+      "name": "Reset Password Redirect Without Token",
+      "commands": [
+        { "id": "13", "command": "open", "target": "/reset-password", "value": "" },
+        { "id": "14", "command": "pause", "target": "1000", "value": "" },
+        { "id": "15", "command": "waitForElementPresent", "target": "xpath=//h1[normalize-space()='Forgot Password']", "value": "30000" },
+        { "id": "16", "command": "waitForText", "target": "xpath=//p[contains(@class,'error')]", "value": "Password reset token is invalid or has expired." }
+      ]
+    },
+    {
+      "id": "9b3fb0cb-9448-4f77-8f75-3399269c5b68",
+      "name": "Forgot Password Form Is Available",
+      "commands": [
+        { "id": "17", "command": "open", "target": "/forgot-password", "value": "" },
+        { "id": "18", "command": "pause", "target": "1000", "value": "" },
+        { "id": "19", "command": "waitForElementPresent", "target": "xpath=//h1[normalize-space()='Forgot Password']", "value": "30000" },
+        { "id": "20", "command": "pause", "target": "1000", "value": "" },
+        { "id": "21", "command": "assertElementPresent", "target": "css=input[placeholder='Email']", "value": "" },
+        { "id": "22", "command": "assertElementPresent", "target": "xpath=//button[normalize-space()='Submit']", "value": "" }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "5a4ba9f5-c6aa-43f1-8b47-d826c1278d96",
+      "name": "Simple Blog Smoke Suite",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 300,
+      "tests": [
+        "c4f7292c-a1db-4fb4-b8d6-e8ed34a3af13",
+        "3909cff8-3d88-4be8-87de-af391db52437",
+        "2cb8f9c8-f0da-4544-8f8b-4be0a2f0ad47",
+        "9b3fb0cb-9448-4f77-8f75-3399269c5b68"
+      ]
+    }
+  ],
+  "urls": [
+    "http://localhost:5173"
+  ],
+  "plugins": []
+}
