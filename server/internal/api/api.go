@@ -3,16 +3,15 @@ package api
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
 	"blog-server/internal/auth"
 	"blog-server/internal/db"
+	"blog-server/internal/model"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -24,8 +23,25 @@ type contextKey string
 
 const userIDKey contextKey = "userID"
 
+type store interface {
+	CreateUser(ctx context.Context, email, passwordHash, displayName string) (model.User, error)
+	GetUserAuthByEmail(ctx context.Context, email string) (id int64, hash string, err error)
+	GetUserAuthByUsername(ctx context.Context, username string) (id int64, hash string, err error)
+	GetUserByID(ctx context.Context, userID int64) (model.User, error)
+	UpdateUserProfile(ctx context.Context, userID int64, firstName, lastName string, age int, gender, address, website, bio, avatarURL string) (model.User, error)
+	CreateResetToken(ctx context.Context, userID int64, tokenHash string, expiresAt time.Time) error
+	ConsumeResetToken(ctx context.Context, tokenHash string) (int64, error)
+	UpdatePassword(ctx context.Context, userID int64, passwordHash string) error
+	CreatePost(ctx context.Context, authorID int64, title, description, content string) (model.Post, error)
+	ListPosts(ctx context.Context) ([]model.Post, error)
+	GetPost(ctx context.Context, postID int64) (model.Post, error)
+	ListPostsByAuthor(ctx context.Context, authorID int64) ([]model.Post, error)
+	CreateComment(ctx context.Context, postID, authorID int64, authorName, content string) (model.Comment, error)
+	ListCommentsByPost(ctx context.Context, postID int64) ([]model.Comment, error)
+}
+
 type Server struct {
-	Store     *db.Store
+	Store     store
 	JWTSecret string
 	TokenTTL  time.Duration
 	ClientURL string
@@ -33,7 +49,7 @@ type Server struct {
 	logger    *log.Logger
 }
 
-func NewServer(store *db.Store, jwtSecret string, tokenTTL, resetTTL time.Duration, clientURL string, logger *log.Logger) *Server {
+func NewServer(store store, jwtSecret string, tokenTTL, resetTTL time.Duration, clientURL string, logger *log.Logger) *Server {
 	return &Server{Store: store, JWTSecret: jwtSecret, TokenTTL: tokenTTL, ResetTTL: resetTTL, ClientURL: clientURL, logger: logger}
 }
 
@@ -479,38 +495,4 @@ func (s *Server) authMiddleware(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), userIDKey, claims.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-func userIDFromCtx(ctx context.Context) int64 {
-	if v, ok := ctx.Value(userIDKey).(int64); ok {
-		return v
-	}
-	return 0
-}
-
-func parseID(w http.ResponseWriter, raw string) (int64, bool) {
-	id, err := strconv.ParseInt(raw, 10, 64)
-	if err != nil || id < 1 {
-		writeError(w, http.StatusBadRequest, "invalid id")
-		return 0, false
-	}
-	return id, true
-}
-
-func decodeJSON(w http.ResponseWriter, r *http.Request, dst any) bool {
-	if err := json.NewDecoder(r.Body).Decode(dst); err != nil {
-		writeError(w, http.StatusBadRequest, "invalid JSON body")
-		return false
-	}
-	return true
-}
-
-func writeJSON(w http.ResponseWriter, status int, data any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(data)
-}
-
-func writeError(w http.ResponseWriter, status int, message string) {
-	writeJSON(w, status, map[string]string{"error": message})
 }

@@ -62,11 +62,22 @@ Client runs on `http://localhost:5173`.
 
 ## Run Tests
 ```bash
-cd server
-GOCACHE=$(pwd)/.cache/go-build GOMODCACHE=$(pwd)/.cache/go-mod go test ./...
+make test
+```
 
-cd ../client
-npm test
+## Run Coverage
+```bash
+make coverage
+```
+
+This runs:
+- backend coverage via Go `coverprofile`
+- frontend coverage via `vitest --coverage`
+
+Run separately:
+```bash
+make coverage-api
+make coverage-ui
 ```
 
 ## Git Pre-Push Hook

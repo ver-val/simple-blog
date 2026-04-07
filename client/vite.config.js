@@ -11,5 +11,9 @@ export default defineConfig({
     setupFiles: "./src/test/setup.js",
     globals: true,
     clearMocks: true,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+    },
   },
 });
