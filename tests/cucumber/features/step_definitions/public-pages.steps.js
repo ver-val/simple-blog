@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { After, Given, When, Then } from "@cucumber/cucumber";
+import { Given, When, Then } from "@cucumber/cucumber";
 import { Builder } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
 import { BasePage } from "../../../selenium/pages/base-page.js";
@@ -81,11 +81,4 @@ Given("I open the forgot password page", async function () {
 Then("I should see the forgot password form controls", async function () {
   assert.equal(await this.page.hasEmailInput(), true);
   assert.equal(await this.page.hasSubmitButton(), true);
-});
-
-After(async function () {
-  if (this.driver) {
-    await this.driver.quit();
-    this.driver = null;
-  }
 });

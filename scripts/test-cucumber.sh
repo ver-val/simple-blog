@@ -48,5 +48,6 @@ fi
 echo "[cucumber] Running Cucumber tests..."
 (
   cd tests/cucumber
+  mkdir -p results
   npm test
 )

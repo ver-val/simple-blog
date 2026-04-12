@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "test": "cucumber-js --config cucumber.mjs"
+    "test": "mkdir -p results && cucumber-js features/**/*.feature --import features/step_definitions/**/*.js --import support/**/*.js --format progress --format json:results/cucumber-report.json --publish-quiet"
   },
   "dependencies": {
     "@cucumber/cucumber": "11.3.0",
