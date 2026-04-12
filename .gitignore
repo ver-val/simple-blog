@@ -25,6 +25,8 @@ server/coverage.out
 tests/keyword/results/
 tests/selenium/screenshots/
 tests/selenium/node_modules/
+tests/cucumber/results/
+tests/cucumber/node_modules/
 
 # IDE
 .vscode/
