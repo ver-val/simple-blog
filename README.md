@@ -90,7 +90,7 @@ make quality
 
 ## GitHub Actions CI
 The repository contains a GitHub Actions workflow in `.github/workflows/ci.yml`.
-It runs on every `push` and on every pull request targeting `main`.
+It runs on every pull request targeting `main`.
 The workflow has separate jobs for:
 - tests
 - lint and style checks
