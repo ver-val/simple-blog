@@ -27,6 +27,8 @@ tests/selenium/screenshots/
 tests/selenium/node_modules/
 tests/cucumber/results/
 tests/cucumber/node_modules/
+postman/node_modules/
+postman/results/
 
 # IDE
 .vscode/

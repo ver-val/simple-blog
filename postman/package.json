@@ -1,0 +1,11 @@
+{
+  "name": "simple-blog-postman-tests",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "test": "newman run blog-api.postman_collection.json -e blog-api.postman_environment.json --reporters cli,json,junit --reporter-json-export results/newman-report.json --reporter-junit-export results/newman-report.xml"
+  },
+  "dependencies": {
+    "newman": "6.2.1"
+  }
+}

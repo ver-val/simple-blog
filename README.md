@@ -90,6 +90,14 @@ make cucumber-test
 
 The Cucumber tests use Gherkin `.feature` files and generate a JSON report in `tests/cucumber/results/cucumber-report.json`.
 
+## Run Postman API Tests
+```bash
+make postman-install
+make api-test
+```
+
+The Postman/Newman API tests generate CLI output plus JSON and JUnit reports in `postman/results/`.
+
 ## Run Coverage
 ```bash
 make coverage
