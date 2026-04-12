@@ -45,3 +45,8 @@ lint-server:
 
 lint-client:
 	cd client && npm run lint
+
+quality: quality-server
+
+quality-server:
+	./scripts/quality-server.sh

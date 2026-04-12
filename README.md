@@ -89,6 +89,22 @@ make coverage-api
 make coverage-ui
 ```
 
+## Run CI Checks Locally
+```bash
+make lint
+make test
+go install honnef.co/go/tools/cmd/staticcheck@latest
+make quality
+```
+
+## GitHub Actions CI
+The repository contains a GitHub Actions workflow in `.github/workflows/ci.yml`.
+It runs on every pull request targeting `main`.
+The workflow has separate jobs for:
+- tests
+- lint and style checks
+- static code analysis via `staticcheck`
+
 ## Git Pre-Push Hook
 Hook runs before every `git push` and executes:
 - server lint (`gofmt` check + `go vet`)
