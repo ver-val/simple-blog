@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { By, until } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,9 +22,16 @@ export class BasePage {
   }
 
   async waitForVisible(locator, timeout = 10000) {
-    const element = await this.driver.wait(until.elementLocated(locator), timeout);
-    await this.driver.wait(until.elementIsVisible(element), timeout);
-    return element;
+    return this.driver.wait(async () => {
+      const elements = await this.driver.findElements(locator);
+      if (elements.length === 0) {
+        return null;
+      }
+
+      const element = elements[0];
+      const visible = await element.isDisplayed().catch(() => false);
+      return visible ? element : null;
+    }, timeout);
   }
 
   async click(locator) {

@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test test-server test-client browser-test selenium-webdriver-install selenium-webdriver-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
+.PHONY: test test-server test-client browser-test selenium-webdriver-install selenium-webdriver-test cucumber-install cucumber-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
 
 test:
 	./scripts/test-all.sh
@@ -19,6 +19,12 @@ selenium-webdriver-install:
 
 selenium-webdriver-test:
 	./scripts/test-selenium-webdriver.sh
+
+cucumber-install:
+	cd tests/cucumber && npm install
+
+cucumber-test:
+	./scripts/test-cucumber.sh
 
 record-play-test:
 	npx selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[headless,no-sandbox,disable-dev-shm-usage]" tests/record-play/simple-blog.side

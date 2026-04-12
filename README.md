@@ -82,6 +82,14 @@ make selenium-webdriver-test
 
 The Selenium WebDriver tests use the Page Object pattern and save screenshots after each test step in `tests/selenium/screenshots/`.
 
+## Run Cucumber Tests
+```bash
+make cucumber-install
+make cucumber-test
+```
+
+The Cucumber tests use Gherkin `.feature` files and generate a JSON report in `tests/cucumber/results/cucumber-report.json`.
+
 ## Run Coverage
 ```bash
 make coverage

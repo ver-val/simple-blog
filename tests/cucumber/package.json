@@ -1,0 +1,13 @@
+{
+  "name": "simple-blog-cucumber-tests",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "test": "cucumber-js --config cucumber.mjs"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "11.3.0",
+    "selenium-webdriver": "4.31.0"
+  }
+}
