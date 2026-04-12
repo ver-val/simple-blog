@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test test-server test-client keyword-test keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
+.PHONY: test test-server test-client browser-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
 
 test:
 	./scripts/test-all.sh
@@ -11,11 +11,20 @@ test-server:
 test-client:
 	cd client && npm test
 
+browser-test:
+	./scripts/test-ui.sh
+
+record-play-test:
+	npx selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[headless,no-sandbox,disable-dev-shm-usage]" tests/record-play/simple-blog.side
+
 keyword-install:
 	python3 -m pip install -r tests/keyword/requirements.txt
 
 keyword-test:
 	python3 -m robot -d tests/keyword/results tests/keyword/simple_blog.robot
+
+keyword-test-headless:
+	python3 -m robot -d tests/keyword/results -v BASE_URL:http://127.0.0.1:5173 -v BROWSER:headlesschrome tests/keyword/simple_blog.robot
 
 coverage: coverage-server coverage-client
 
