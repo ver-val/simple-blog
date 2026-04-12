@@ -3,8 +3,44 @@
     "_postman_id": "76d9f9de-8b97-49f2-a130-0b4f76bd7e7d",
     "name": "Blog API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "API collection for Simple Blog backend (Go + PostgreSQL)."
+    "description": "API collection for Simple Blog backend (Go + React + PostgreSQL)."
   },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (!pm.collectionVariables.get('runId')) {",
+          "  var runId = String(Date.now());",
+          "  pm.collectionVariables.set('runId', runId);",
+          "  pm.collectionVariables.set('email', 'aqa+' + runId + '@example.com');",
+          "  pm.collectionVariables.set('displayName', 'aqa_' + runId);",
+          "  pm.collectionVariables.set('password', 'Asdf@1234');",
+          "  pm.collectionVariables.set('newPassword', 'Qwer@1234');",
+          "  pm.collectionVariables.set('postTitle', 'API post ' + runId);",
+          "  pm.collectionVariables.set('postDescription', 'API description ' + runId);",
+          "  pm.collectionVariables.set('postBody', 'API body ' + runId);",
+          "  pm.collectionVariables.set('commentName', 'aqa');",
+          "  pm.collectionVariables.set('commentMessage', 'comment ' + runId);",
+          "  pm.environment.set('token', '');",
+          "  pm.environment.set('postId', '');",
+          "  pm.environment.set('resetToken', '');",
+          "  pm.environment.set('userId', '');",
+          "}",
+          "pm.variables.set('email', pm.collectionVariables.get('email'));",
+          "pm.variables.set('displayName', pm.collectionVariables.get('displayName'));",
+          "pm.variables.set('password', pm.collectionVariables.get('password'));",
+          "pm.variables.set('newPassword', pm.collectionVariables.get('newPassword'));",
+          "pm.variables.set('postTitle', pm.collectionVariables.get('postTitle'));",
+          "pm.variables.set('postDescription', pm.collectionVariables.get('postDescription'));",
+          "pm.variables.set('postBody', pm.collectionVariables.get('postBody'));",
+          "pm.variables.set('commentName', pm.collectionVariables.get('commentName'));",
+          "pm.variables.set('commentMessage', pm.collectionVariables.get('commentMessage'));"
+        ]
+      }
+    }
+  ],
   "item": [
     {
       "name": "Health",
@@ -13,10 +49,27 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/health",
-          "host": ["{{baseUrl}}"],
-          "path": ["health"]
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
         }
-      }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('health status is 200', function () { pm.response.to.have.status(200); });",
+              "var data = pm.response.json();",
+              "pm.test('health payload contains ok status', function () { pm.expect(data.status).to.eql('ok'); });"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "Auth",
@@ -25,15 +78,26 @@
           "name": "Register",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"asdf.asdf@example.com\",\n  \"password\": \"Asdf@1234\",\n  \"displayName\": \"asdf.asdf\"\n}"
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"displayName\": \"{{displayName}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
             }
           },
           "event": [
@@ -42,12 +106,16 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('status is 201', function () {", 
-                  "  pm.response.to.have.status(201);", 
-                  "});", 
-                  "var data = pm.response.json();", 
-                  "if (data.token) pm.environment.set('token', data.token);", 
-                  "if (data.user && data.user.id) pm.environment.set('userId', String(data.user.id));"
+                  "pm.test('register status is 201', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('register returns token and user', function () {",
+                  "  pm.expect(data.token).to.be.a('string').and.not.empty;",
+                  "  pm.expect(data.user.id).to.be.a('number');",
+                  "  pm.expect(data.user.email).to.eql(pm.collectionVariables.get('email'));",
+                  "  pm.expect(data.user.displayName).to.eql(pm.collectionVariables.get('displayName'));",
+                  "});",
+                  "pm.environment.set('token', data.token);",
+                  "pm.environment.set('userId', String(data.user.id));"
                 ]
               }
             }
@@ -57,15 +125,26 @@
           "name": "Login",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"asdf.asdf\",\n  \"password\": \"Asdf@1234\"\n}"
+              "raw": "{\n  \"username\": \"{{displayName}}\",\n  \"password\": \"{{password}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             }
           },
           "event": [
@@ -74,12 +153,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('status is 200', function () {", 
-                  "  pm.response.to.have.status(200);", 
-                  "});", 
-                  "var data = pm.response.json();", 
-                  "if (data.token) pm.environment.set('token', data.token);", 
-                  "if (data.user && data.user.id) pm.environment.set('userId', String(data.user.id));"
+                  "pm.test('login status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('login returns token and same user', function () {",
+                  "  pm.expect(data.token).to.be.a('string').and.not.empty;",
+                  "  pm.expect(String(data.user.id)).to.eql(pm.environment.get('userId'));",
+                  "});",
+                  "pm.environment.set('token', data.token);"
                 ]
               }
             }
@@ -89,15 +169,26 @@
           "name": "Forgot Password",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"asdf.asdf@example.com\"\n}"
+              "raw": "{\n  \"email\": \"{{email}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/forgot-password",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "forgot-password"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
             }
           },
           "event": [
@@ -106,8 +197,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var data = pm.response.json();", 
-                  "if (data.debugToken) pm.environment.set('resetToken', data.debugToken);"
+                  "pm.test('forgot password status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('forgot password returns debug token', function () {",
+                  "  pm.expect(data.message).to.eql('Reset token generated');",
+                  "  pm.expect(data.debugToken).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.environment.set('resetToken', data.debugToken);"
                 ]
               }
             }
@@ -117,17 +213,177 @@
           "name": "Reset Password",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"newPassword\": \"Asdf@1234\"\n}"
+              "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"newPassword\": \"{{newPassword}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/reset-password",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "reset-password"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password"
+              ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('reset password status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('reset password confirms success', function () {",
+                  "  pm.expect(data.message).to.eql('password has been reset');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login With New Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{displayName}}\",\n  \"password\": \"{{newPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('login with new password status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('login with new password returns token', function () { pm.expect(data.token).to.be.a('string').and.not.empty; });",
+                  "pm.environment.set('token', data.token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('get profile status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('get profile returns current user', function () {",
+                  "  pm.expect(String(data.id)).to.eql(pm.environment.get('userId'));",
+                  "  pm.expect(data.email).to.eql(pm.collectionVariables.get('email'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"AQA\",\n  \"lastName\": \"User\",\n  \"age\": 25,\n  \"gender\": \"Female\",\n  \"address\": \"QA Street 1\",\n  \"website\": \"https://example.com\",\n  \"bio\": \"updated by API test\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profile/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('update profile status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('profile fields are updated', function () {",
+                  "  pm.expect(data.firstName).to.eql('AQA');",
+                  "  pm.expect(data.lastName).to.eql('User');",
+                  "  pm.expect(data.age).to.eql(25);",
+                  "  pm.expect(data.address).to.eql('QA Street 1');",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -141,8 +397,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/posts",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "posts"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "posts"
+              ]
             }
           },
           "event": [
@@ -151,10 +412,9 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var data = pm.response.json();", 
-                  "if (Array.isArray(data) && data.length > 0 && data[0].id) {", 
-                  "  pm.environment.set('postId', String(data[0].id));", 
-                  "}"
+                  "pm.test('list posts status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('list posts returns array', function () { pm.expect(Array.isArray(data)).to.eql(true); });"
                 ]
               }
             }
@@ -165,17 +425,28 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"some title\",\n  \"description\": \"some short description\",\n  \"body\": \"some body\"\n}"
+              "raw": "{\n  \"title\": \"{{postTitle}}\",\n  \"description\": \"{{postDescription}}\",\n  \"body\": \"{{postBody}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/posts",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "posts"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "posts"
+              ]
             }
           },
           "event": [
@@ -184,11 +455,14 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('status is 201', function () {", 
-                  "  pm.response.to.have.status(201);", 
-                  "});", 
-                  "var data = pm.response.json();", 
-                  "if (data.id) pm.environment.set('postId', String(data.id));"
+                  "pm.test('create post status is 201', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('create post returns created entity', function () {",
+                  "  pm.expect(data.id).to.be.a('number');",
+                  "  pm.expect(data.title).to.eql(pm.collectionVariables.get('postTitle'));",
+                  "  pm.expect(data.description).to.eql(pm.collectionVariables.get('postDescription'));",
+                  "});",
+                  "pm.environment.set('postId', String(data.id));"
                 ]
               }
             }
@@ -201,10 +475,33 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/posts/{{postId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "posts", "{{postId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "posts",
+                "{{postId}}"
+              ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('get post status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('get post returns post and comments', function () {",
+                  "  pm.expect(data.post.id).to.eql(Number(pm.environment.get('postId')));",
+                  "  pm.expect(data.post.title).to.eql(pm.collectionVariables.get('postTitle'));",
+                  "  pm.expect(Array.isArray(data.comments)).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
         },
         {
           "name": "List User Posts",
@@ -213,10 +510,33 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/users/{{userId}}/posts",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "{{userId}}", "posts"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}",
+                "posts"
+              ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('list user posts status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('user posts contain created post', function () {",
+                  "  pm.expect(Array.isArray(data)).to.eql(true);",
+                  "  pm.expect(data.some(function (post) { return String(post.id) === pm.environment.get('postId'); })).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -230,46 +550,15 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "posts", "{{postId}}", "comments"]
-            }
-          }
-        },
-        {
-          "name": "Add Comment (Auth)",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"asdf\",\n  \"message\": \"asdf\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "posts", "{{postId}}", "comments"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Profile (Auth)",
-      "item": [
-        {
-          "name": "Get My Profile",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/profile/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "profile", "me"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "posts",
+                "{{postId}}",
+                "comments"
+              ]
             }
           },
           "event": [
@@ -278,31 +567,97 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "var data = pm.response.json();", 
-                  "if (data.id) pm.environment.set('userId', String(data.id));"
+                  "pm.test('list comments status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('list comments returns array', function () { pm.expect(Array.isArray(data)).to.eql(true); });"
                 ]
               }
             }
           ]
         },
         {
-          "name": "Update My Profile",
+          "name": "Add Comment (Auth)",
           "request": {
-            "method": "PUT",
+            "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Authorization", "value": "Bearer {{token}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"firstName\": \"ashis\",\n  \"lastName\": \"raj\",\n  \"age\": 25,\n  \"gender\": \"Male\",\n  \"address\": \"E-605\",\n  \"website\": \"https://example.com\"\n}"
+              "raw": "{\n  \"name\": \"{{commentName}}\",\n  \"message\": \"{{commentMessage}}\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/profile/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "profile", "me"]
+              "raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "posts",
+                "{{postId}}",
+                "comments"
+              ]
             }
-          }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('create comment status is 201', function () { pm.response.to.have.status(201); });",
+                  "var data = pm.response.json();",
+                  "pm.test('create comment returns created comment', function () {",
+                  "  pm.expect(data.postId).to.eql(Number(pm.environment.get('postId')));",
+                  "  pm.expect(data.authorName).to.eql(pm.collectionVariables.get('commentName'));",
+                  "  pm.expect(data.content).to.eql(pm.collectionVariables.get('commentMessage'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Comments By Post After Create",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/{{postId}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "posts",
+                "{{postId}}",
+                "comments"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('list comments after create status is 200', function () { pm.response.to.have.status(200); });",
+                  "var data = pm.response.json();",
+                  "pm.test('new comment is present', function () {",
+                  "  pm.expect(Array.isArray(data)).to.eql(true);",
+                  "  pm.expect(data.some(function (comment) { return comment.content === pm.collectionVariables.get('commentMessage'); })).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     }
