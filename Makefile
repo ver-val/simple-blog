@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test test-server test-client keyword-test keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client
+.PHONY: test test-server test-client keyword-test keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
 
 test:
 	./scripts/test-all.sh
@@ -36,3 +36,8 @@ lint-server:
 
 lint-client:
 	cd client && npm run lint
+
+quality: quality-server
+
+quality-server:
+	./scripts/quality-server.sh
