@@ -65,6 +65,15 @@ Client runs on `http://localhost:5173`.
 make test
 ```
 
+## Run UI Tests
+```bash
+make browser-test
+```
+
+This starts the frontend locally and runs:
+- Selenium IDE record-and-play tests
+- Robot Framework keyword-driven tests
+
 ## Run Coverage
 ```bash
 make coverage
@@ -86,6 +95,8 @@ Hook runs before every `git push` and executes:
 - server unit tests
 - client lint (`eslint`)
 - client unit tests (`vitest`)
+- Selenium IDE record-and-play UI tests
+- Robot Framework keyword-driven UI tests
 
 Setup:
 ```bash
