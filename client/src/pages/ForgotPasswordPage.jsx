@@ -1,14 +1,24 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "../api/http";
 
 export default function ForgotPasswordPage() {
+  const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [token, setToken] = useState("");
   const [error, setError] = useState("");
-  const routeError = location.state?.error || "";
+  const [routeError] = useState(location.state?.error || "");
+
+  useEffect(() => {
+    if (!routeError) {
+      return;
+    }
+
+    // Consume one-time redirect error from history after it has been copied to local state.
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, navigate, routeError]);
 
   const onSubmit = async (e) => {
     e.preventDefault();

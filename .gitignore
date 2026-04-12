@@ -23,6 +23,8 @@ server/coverage.out
 # misc caches
 .cache/
 tests/keyword/results/
+tests/selenium/screenshots/
+tests/selenium/node_modules/
 
 # IDE
 .vscode/

@@ -32,4 +32,17 @@ describe("ResetPasswordPage", () => {
 
     expect(await screen.findByRole("heading", { name: "Reset Password" })).toBeInTheDocument();
   });
+
+  it("does not show reset token error when forgot password is opened directly", async () => {
+    render(
+      <MemoryRouter initialEntries={["/forgot-password"]}>
+        <Routes>
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole("heading", { name: "Forgot Password" })).toBeInTheDocument();
+    expect(screen.queryByText("Password reset token is invalid or has expired.")).not.toBeInTheDocument();
+  });
 });
