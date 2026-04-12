@@ -5,3 +5,4 @@ ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "$ROOT_DIR"
 
 ./scripts/test-all.sh
+./scripts/test-ui.sh
