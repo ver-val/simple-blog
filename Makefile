@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test test-server test-client coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client
+.PHONY: test test-server test-client keyword-test keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client
 
 test:
 	./scripts/test-all.sh
@@ -10,6 +10,12 @@ test-server:
 
 test-client:
 	cd client && npm test
+
+keyword-install:
+	python3 -m pip install -r tests/keyword/requirements.txt
+
+keyword-test:
+	python3 -m robot -d tests/keyword/results tests/keyword/simple_blog.robot
 
 coverage: coverage-server coverage-client
 
