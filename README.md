@@ -74,6 +74,14 @@ This starts the frontend locally and runs:
 - Selenium IDE record-and-play tests
 - Robot Framework keyword-driven tests
 
+## Run Selenium WebDriver Tests
+```bash
+make selenium-webdriver-install
+make selenium-webdriver-test
+```
+
+The Selenium WebDriver tests use the Page Object pattern and save screenshots after each test step in `tests/selenium/screenshots/`.
+
 ## Run Coverage
 ```bash
 make coverage

@@ -6,3 +6,4 @@ cd "$ROOT_DIR"
 
 ./scripts/test-all.sh
 ./scripts/test-ui.sh
+./scripts/test-selenium-webdriver.sh
