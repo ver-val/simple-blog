@@ -15,7 +15,7 @@ browser-test:
 	./scripts/test-ui.sh
 
 record-play-test:
-	npx selenium-side-runner --runInBand -c "browserName=chrome goog:chromeOptions.args=[headless,no-sandbox,disable-dev-shm-usage]" tests/record-play/simple-blog.side
+	npx selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[headless,no-sandbox,disable-dev-shm-usage]" tests/record-play/simple-blog.side
 
 keyword-install:
 	python3 -m pip install -r tests/keyword/requirements.txt
