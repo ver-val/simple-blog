@@ -81,3 +81,30 @@ jobs:
 
       - name: Run static code analysis
         run: make quality
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Run security scan
+        run: make security

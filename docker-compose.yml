@@ -63,6 +63,7 @@ services:
       CLIENT_URL: ${CLIENT_URL}
       SERVER_ADDR: ${SERVER_ADDR}
       PPROF_ADDR: ${PPROF_ADDR}
+      ENABLE_PPROF: ${ENABLE_PPROF:-false}
     ports:
       - "${SERVER_PORT:-8080}:8080"
       - "${PPROF_PORT:-6060}:6060"
