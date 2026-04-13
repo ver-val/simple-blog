@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test test-server test-client api-test postman-install load-test browser-test selenium-webdriver-install selenium-webdriver-test cucumber-install cucumber-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
+.PHONY: test test-server test-client api-test postman-install load-test stress-test seed-data docker-charts browser-test selenium-webdriver-install selenium-webdriver-test cucumber-install cucumber-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
 
 test:
 	./scripts/test-all.sh
@@ -19,6 +19,15 @@ api-test:
 
 load-test:
 	./scripts/test-k6.sh
+
+stress-test:
+	./scripts/test-k6-stress.sh
+
+seed-data:
+	cd server && set -a && . ../.env && set +a && DATABASE_URL="$${DATABASE_URL_LOCAL:-postgres://postgres:postgres@localhost:5432/blog?sslmode=disable}" go run ./cmd/seed
+
+docker-charts:
+	python3 scripts/generate-docker-charts.py
 
 browser-test:
 	./scripts/test-ui.sh

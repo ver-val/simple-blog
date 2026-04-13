@@ -62,8 +62,10 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       CLIENT_URL: ${CLIENT_URL}
       SERVER_ADDR: ${SERVER_ADDR}
+      PPROF_ADDR: ${PPROF_ADDR}
     ports:
       - "${SERVER_PORT:-8080}:8080"
+      - "${PPROF_PORT:-6060}:6060"
 
   client:
     build:

@@ -129,6 +129,67 @@ BASE_URL=http://localhost:8080 SCENARIO_DURATION=5m make load-test
 
 The run writes a summary report to `tests/performance/results/k6-summary.json`.
 
+## Prepare Data For Stress Tests
+Before stress testing, seed the database with a much larger data set:
+```bash
+make seed-data
+```
+
+Defaults:
+- `SEED_POSTS=2000`
+- `SEED_COMMENTS_PER_POST=5`
+
+`make seed-data` runs from the host machine, so it uses `DATABASE_URL_LOCAL` (default: `postgres://postgres:postgres@localhost:5432/blog?sslmode=disable`).
+
+Example:
+```bash
+SEED_POSTS=3000 SEED_COMMENTS_PER_POST=10 make seed-data
+```
+
+## Run k6 Stress Tests
+Stress scenarios include a warm-up period and then ramp the load up step by step.
+
+Start the application stack first:
+```bash
+docker compose up --build -d
+```
+
+Then seed the database:
+```bash
+make seed-data
+```
+
+Run the mixed user stress scenario:
+```bash
+make stress-test
+```
+
+Or stress a specific operation:
+```bash
+STRESS_MODE=login make stress-test
+STRESS_MODE=read make stress-test
+STRESS_MODE=post make stress-test
+STRESS_MODE=comment make stress-test
+```
+
+The stress runner also captures Docker resource usage into:
+- `tests/performance/results/docker-stats.csv`
+- `tests/performance/results/k6-stress-summary.json`
+- `tests/performance/results/k6-stress-summary.txt`
+
+Generate Docker CPU/Memory charts from the captured CSV:
+```bash
+make docker-charts
+```
+
+This creates:
+- `tests/performance/results/docker-cpu.svg`
+- `tests/performance/results/docker-memory.svg`
+- `tests/performance/results/docker-charts.html`
+
+The backend exposes Go pprof locally on:
+- `http://localhost:6060/debug/pprof/`
+
 ## Run Coverage
 ```bash
 make coverage
