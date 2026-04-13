@@ -98,6 +98,37 @@ make api-test
 
 The Postman/Newman API tests generate CLI output plus JSON and JUnit reports in `postman/results/`.
 
+## Run k6 Load Tests
+Start the application stack first:
+```bash
+docker compose up --build -d
+```
+
+Then run the load scenarios:
+```bash
+make load-test
+```
+
+The k6 scenarios are defined in `tests/performance/blog-load.js` and model a normal load of `5` concurrent users:
+- login -> open a full post -> logout
+- login -> open one post -> return to the post list -> open another post -> add a comment -> logout
+- login -> create a post -> logout
+- login -> view and update profile -> logout
+
+Requirements:
+- backend API available at `http://localhost:8080`
+- PostgreSQL running and migrated
+- `k6` installed locally
+
+By default, each scenario runs for `5m`.
+
+Optional environment variables:
+```bash
+BASE_URL=http://localhost:8080 SCENARIO_DURATION=5m make load-test
+```
+
+The run writes a summary report to `tests/performance/results/k6-summary.json`.
+
 ## Run Coverage
 ```bash
 make coverage
