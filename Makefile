@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test test-server test-client api-test postman-install load-test stress-test seed-data docker-charts browser-test selenium-webdriver-install selenium-webdriver-test cucumber-install cucumber-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server
+.PHONY: test test-server test-client api-test postman-install load-test stress-test seed-data docker-charts browser-test selenium-webdriver-install selenium-webdriver-test cucumber-install cucumber-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server security security-server security-client
 
 test:
 	./scripts/test-all.sh
@@ -80,3 +80,11 @@ quality: quality-server
 
 quality-server:
 	./scripts/quality-server.sh
+
+security: security-server security-client
+
+security-server:
+	./scripts/security-server.sh
+
+security-client:
+	./scripts/security-client.sh

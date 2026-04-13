@@ -190,6 +190,11 @@ This creates:
 The backend exposes Go pprof locally on:
 - `http://localhost:6060/debug/pprof/`
 
+`pprof` is disabled by default. Enable it explicitly when needed:
+```bash
+ENABLE_PPROF=true docker compose up --build -d
+```
+
 ## Run Coverage
 ```bash
 make coverage
@@ -220,6 +225,15 @@ The workflow has separate jobs for:
 - tests
 - lint and style checks
 - static code analysis via `staticcheck`
+- security scanning via `gosec`
+
+## Run Security Scan
+```bash
+make security
+```
+
+This runs `gosec` against the Go backend source code in `server/cmd` and `server/internal`.
+It also runs `npm audit --omit=dev` for the frontend production dependencies.
 
 ## Git Pre-Push Hook
 Hook runs before every `git push` and executes:
