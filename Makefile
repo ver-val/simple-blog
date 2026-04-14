@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test test-server test-client api-test postman-install load-test stress-test seed-data docker-charts browser-test selenium-webdriver-install selenium-webdriver-test cucumber-install cucumber-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server security security-server security-client
+.PHONY: test test-server test-client api-test postman-install load-test stress-test seed-data docker-charts dast browser-test selenium-webdriver-install selenium-webdriver-test cucumber-install cucumber-test record-play-test keyword-test keyword-test-headless keyword-install coverage coverage-api coverage-ui coverage-server coverage-client lint lint-server lint-client quality quality-server security security-server security-client
 
 test:
 	./scripts/test-all.sh
@@ -28,6 +28,9 @@ seed-data:
 
 docker-charts:
 	python3 scripts/generate-docker-charts.py
+
+dast:
+	./scripts/test-zap.sh
 
 browser-test:
 	./scripts/test-ui.sh

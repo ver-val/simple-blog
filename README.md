@@ -235,6 +235,27 @@ make security
 This runs `gosec` against the Go backend source code in `server/cmd` and `server/internal`.
 It also runs `npm audit --omit=dev` for the frontend production dependencies.
 
+## Run DAST Scan
+Start the application stack first:
+```bash
+docker compose up --build -d
+```
+
+Then run OWASP ZAP in Docker:
+```bash
+make dast
+```
+
+The DAST script authenticates against `/api/auth/login`, extracts a JWT token, and passes it to ZAP in the `Authorization: Bearer ...` header so the scanner can inspect authenticated API endpoints as well.
+
+Reports are written to:
+- `tests/dast/results/public-zap.html`
+- `tests/dast/results/public-zap.json`
+- `tests/dast/results/public-zap.md`
+- `tests/dast/results/auth-zap.html`
+- `tests/dast/results/auth-zap.json`
+- `tests/dast/results/auth-zap.md`
+
 ## Git Pre-Push Hook
 Hook runs before every `git push` and executes:
 - server lint (`gofmt` check + `go vet`)
