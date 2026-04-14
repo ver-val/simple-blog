@@ -7,6 +7,13 @@ import (
 	"strconv"
 )
 
+func securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func userIDFromCtx(ctx context.Context) int64 {
 	if v, ok := ctx.Value(userIDKey).(int64); ok {
 		return v

@@ -126,3 +126,18 @@ func TestWriteError(t *testing.T) {
 		t.Fatalf("unexpected body: %s", body)
 	}
 }
+
+func TestSecurityHeaders(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+
+	handler := securityHeaders(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}))
+
+	handler.ServeHTTP(rec, req)
+
+	if got := rec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+		t.Fatalf("expected X-Content-Type-Options nosniff, got %q", got)
+	}
+}

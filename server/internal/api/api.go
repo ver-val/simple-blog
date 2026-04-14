@@ -58,6 +58,7 @@ func (s *Server) Router() http.Handler {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
+	r.Use(securityHeaders)
 	r.Use(s.requestLogger)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{s.ClientURL, "http://localhost:5173"},
