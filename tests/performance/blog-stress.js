@@ -335,7 +335,7 @@ export function readOnlyFlow(data) {
   const startedAt = Date.now();
   try {
     const user = scenarioUser(data.read);
-    loginUser(user);
+    const token = loginUser(user);
     const posts = listPosts();
     const postId = posts[0]?.id || data.posts[0];
     getPost(postId);

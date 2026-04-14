@@ -16,14 +16,7 @@ export default function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute message="You must be logged in first!">
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

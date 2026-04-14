@@ -30,6 +30,7 @@ tests/cucumber/node_modules/
 postman/node_modules/
 postman/results/
 tests/performance/results/
+tests/dast/results/
 
 # IDE
 .vscode/
